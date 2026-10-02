@@ -55,7 +55,22 @@ Audit writes are opt-in metadata containing time, surface, tool, risk, static de
 
 [API keys](https://developers.buffer.com/guides/authentication) authenticate through Authorization: Bearer at the fixed https://api.buffer.com endpoint. Personal API keys act across every organization accessible to that account; an organization input/default does not restrict the key. Provider roles, publishing policies and connected-channel grants still apply. Named local profiles route credentials and defaults; they cannot narrow provider authorization.
 
-OAuth access tokens already granted to an app can use the same private credential path. The wrapper does not register apps, open consent, implement PKCE exchange, save refresh tokens or renew expiry. Follow [OAuth](https://developers.buffer.com/guides/oauth) for current PKCE and organization-specific app grants. PAT and OAuth permissions differ. Analytics uses PAT insightsRead access; current OAuth grants cannot request that analytics scope.
+OAuth access tokens already granted to an app can use the same private credential path. The wrapper does not register apps, open consent, implement PKCE exchange, save refresh tokens or renew expiry. Follow [OAuth](https://developers.buffer.com/guides/authentication#oauth) for current PKCE and organization-specific app grants. PAT and OAuth permissions differ. Analytics uses PAT insightsRead access; current OAuth grants cannot request that analytics scope.
+
+Current OAuth scopes in the provider's authentication guide:
+
+| Scope | Purpose |
+| --- | --- |
+| posts:read | Read posts and queues |
+| posts:write | Create and manage posts |
+| ideas:read | Read ideas |
+| ideas:write | Create and manage ideas |
+| account:read | Read account information |
+| account:write | Manage permitted account settings |
+| offline_access | Request a refresh token from the issuer; this wrapper does not refresh it |
+
+Request only the grant needed for the intended workflow. A refresh token is not a Bearer API credential. PAT insightsRead analytics is separate from the current OAuth scope list.
+
 
 Use a private 0700 directory and 0600 regular token-only file on macOS/Linux. Windows users must restrict the file's ACL to their own user; POSIX checks do not establish Windows ACL protection. Files cannot be symlinks or exceed 64 KiB. File credentials override environment keys and are cached until restart. No automatic .env loader, browser credential harvesting or global official CLI configuration is used.
 
