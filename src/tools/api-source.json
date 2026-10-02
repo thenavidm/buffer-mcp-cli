@@ -1,0 +1,29 @@
+{
+  "officialPackage": "@bufferapp/cli",
+  "version": "1.2.2",
+  "license": "ISC",
+  "checked": "2026-10-02T23:53:51.433Z",
+  "sources": [
+    "https://registry.npmjs.org/@bufferapp/cli/-/cli-1.2.2.tgz",
+    "https://developers.buffer.com/reference",
+    "https://developers.buffer.com/guides/error-handling"
+  ],
+  "publishedOperations": 35,
+  "currentReferenceOperations": 42,
+  "experimentalOnlyViaGeneric": [
+    "snippets",
+    "createSnippet",
+    "createTag",
+    "deleteSnippet",
+    "deleteTag",
+    "updateSnippet",
+    "updateTag"
+  ],
+  "referenceSha256": "184e7ec98656720beb82b1b646f638ff1e8bba23da763927e06f9b250dd759be",
+  "publishedBundleSha256": "504c415a6ef65ba579378b9220e32204edab8ea38d0b4f6ca0b0e96181353405",
+  "operationsSha256": "e4d6abc567476183d6e1cc6cc8ff82307616729ef1e39372e391acd3c8406ca1",
+  "rendererSha256": "d19b226b7b3d39b67cdc226503a4806bfb501101dada00b5ae406d24a3bc7222",
+  "wholeOfficialCliInstalled": false,
+  "vendoredRendererSha256": "42d8efbac03da3f428f5d70f025477a17e268bfc16a639110c0a8b129fc00016",
+  "refreshNote": "Review the current live reference, experimental roots, licenses, tool counts, named mutation success types, manifest, tests, README and full CMS before release. Older reference checksum is retained as a dated baseline, not a new fetch."
+}

@@ -1,0 +1,99 @@
+{
+  "name": "@thenavidm/buffer-mcp-cli",
+  "version": "2.0.0",
+  "description": "Buffer GraphQL MCP and CLI with shared confirmation, read-only policies, private accounts and bounded read pagination.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "bin": {
+    "buffer-mcp": "dist/index.js",
+    "buffer-cli": "dist/index.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "start": "node dist/index.js",
+    "prepublishOnly": "npm run build",
+    "build:mcpb": "bash desktop-extension/build.sh",
+    "check:counts": "node scripts/check-counts.mjs",
+    "sync:api": "node scripts/sync-official-schema.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.0",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "graphql": "^16.12.0"
+  },
+  "devDependencies": {
+    "@anthropic-ai/mcpb": "2.1.2",
+    "@types/node": "^22.10.0",
+    "acorn": "8.18.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.2",
+    "vitest": "^5.0.3"
+  },
+  "license": "AGPL-3.0-or-later",
+  "author": "Navid Moazzez (https://navid.me)",
+  "homepage": "https://navid.me/mcp-servers/buffer",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thenavidm/buffer-mcp-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/thenavidm/buffer-mcp-cli/issues"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "INSTALL.md",
+    "SKILL.md",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md",
+    "licenses",
+    "CHANGELOG.md",
+    "SECURITY.md",
+    "COMPARISON.md",
+    "CONTRIBUTING.md"
+  ],
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "cli",
+    "command-line-tool",
+    "buffer",
+    "social-media",
+    "social-publishing",
+    "graphql",
+    "scheduling",
+    "posts",
+    "content-items",
+    "post-templates",
+    "codex",
+    "claude-code",
+    "claude-desktop",
+    "cursor",
+    "ai-agents",
+    "typescript",
+    "desktop-extension",
+    "private-accounts",
+    "api-key",
+    "json",
+    "windows-cli",
+    "write-safety",
+    "gemini-cli",
+    "windsurf",
+    "open-source",
+    "creator-workflows",
+    "analytics"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "overrides": {
+    "tmp": "^0.2.7"
+  }
+}

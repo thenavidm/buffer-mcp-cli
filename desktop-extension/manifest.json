@@ -1,0 +1,92 @@
+{
+  "manifest_version": "0.2",
+  "name": "buffer",
+  "display_name": "Buffer",
+  "version": "2.0.0",
+  "description": "Buffer MCP server with 41 tools: 24 reads and 17 confirmed mutations.",
+  "long_description": "Current schema-generated GraphQL operations with private named credentials, shared mandatory mutation confirmation and read-only enforcement. Includes local previews and bounded read pagination. Provider account and GUI outcomes are validated separately.",
+  "author": {
+    "name": "Navid Moazzez",
+    "url": "https://navid.me"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thenavidm/buffer-mcp-cli"
+  },
+  "homepage": "https://github.com/thenavidm/buffer-mcp-cli",
+  "documentation": "https://github.com/thenavidm/buffer-mcp-cli/blob/main/INSTALL.md",
+  "support": "https://github.com/thenavidm/buffer-mcp-cli/issues",
+  "license": "AGPL-3.0-or-later",
+  "keywords": [
+    "buffer",
+    "social-publishing",
+    "graphql",
+    "private-accounts",
+    "mcp",
+    "cli",
+    "desktop-extension",
+    "scheduling"
+  ],
+  "server": {
+    "type": "node",
+    "entry_point": "server/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": [
+        "${__dirname}/server/index.js"
+      ],
+      "env": {
+        "BUFFER_API_KEY": "${user_config.api_key}",
+        "BUFFER_TOKEN_FILE": "${user_config.token_file}",
+        "BUFFER_READ_ONLY": "${user_config.read_only}",
+        "BUFFER_ALLOW_DESTRUCTIVE": "${user_config.allow_operations}",
+        "BUFFER_ORGANIZATION_ID": "${user_config.organization_id}"
+      }
+    }
+  },
+  "user_config": {
+    "token_file": {
+      "type": "string",
+      "title": "Private token-only file",
+      "description": "Absolute regular owner-only token file, at most 64 KB. Never bundle it.",
+      "required": false
+    },
+    "read_only": {
+      "type": "boolean",
+      "title": "Read only",
+      "description": "Hide and refuse all native and generic GraphQL mutations.",
+      "default": false,
+      "required": false
+    },
+    "api_key": {
+      "type": "string",
+      "title": "Private Buffer API key",
+      "description": "API key from your account; leave empty for token_file.",
+      "required": false,
+      "sensitive": true
+    },
+    "allow_operations": {
+      "type": "boolean",
+      "title": "Allow explicitly confirmed account operations",
+      "description": "Allow only explicitly confirmed mutations; read-only still takes precedence.",
+      "default": true,
+      "required": false
+    },
+    "organization_id": {
+      "type": "string",
+      "title": "Default organization ID",
+      "description": "Optional input default only; does not restrict the account-wide permissions of a PAT.",
+      "required": false
+    }
+  },
+  "compatibility": {
+    "platforms": [
+      "darwin",
+      "win32",
+      "linux"
+    ],
+    "runtimes": {
+      "node": ">=22"
+    }
+  }
+}
