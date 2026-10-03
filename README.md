@@ -13,7 +13,7 @@ Buffer MCP server and CLI for Codex and AI agents. **41 tools** for current Grap
 
 Built and maintained by [Navid Moazzez](https://navid.me?utm_source=github&utm_medium=referral&utm_campaign=buffer-mcp-cli&utm_content=readme). The complete guide is on [navid.me](https://navid.me/mcp-servers/buffer).
 
-<img src="https://cdn.navid.me/repos/buffer-mcp-cli.gif?v=2.0.0" alt="Illustrated workflow in the house terminal component" width="520">
+<img src="https://cdn.navid.me/repos/buffer-mcp-cli-retina.gif" alt="Illustrated workflow in the house terminal component" width="520">
 
 The terminal illustrates real command names and approval flow. It is not a recording of a provider account run. Buffer already has official CLI and hosted MCP products; their current schemas, field selection and supported workflows are compared below.
 
