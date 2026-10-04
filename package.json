@@ -1,12 +1,13 @@
 {
   "name": "@thenavidm/buffer-mcp-cli",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Buffer GraphQL MCP and CLI with shared confirmation, read-only policies, private accounts and bounded read pagination.",
   "type": "module",
   "main": "./dist/index.js",
   "bin": {
     "buffer-mcp": "dist/index.js",
-    "buffer-cli": "dist/index.js"
+    "buffer-cli": "dist/index.js",
+    "buffer-mcp-cli": "dist/npx.js"
   },
   "engines": {
     "node": ">=22"
