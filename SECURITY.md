@@ -10,7 +10,9 @@ Buffer receives the requested native GraphQL operation/variables; social deliver
 
 Opt-in audit logs contain guard metadata only. Do not put credentials, signed links, raw headers, account dumps or .env files into commits, artifacts or public issues. Private legacy history stays outside the new public repository. Public npm and desktop bundles must be scanned before release.
 
-All 17 exposed mutation tools require --confirm/confirm=true for the exact human-requested action. Named create/edit/delete/queue/content/promotion/template operations and generic GraphQL mutation pass through one WriteGuard before file reading or network work.
+All 17 exposed mutation tools require --confirm/confirm=true for the exact human-requested action. Named create/edit/delete/queue/content/promotion/template operations and generic GraphQL mutation pass through one write guard before file reading or network work.
+
+Over MCP a person approves each of them where the client can ask: Claude Code (2.1.246 and later) shows its own prompt, and a client that can show forms asks with an approval form whose one box starts unticked. Each approval is signed, bound to that exact call and works once. Where a client can do neither, the model's confirm:true counts. BUFFER_CONFIRM=model makes confirm:true enough everywhere, for an agent with no person to ask.
 
 BUFFER_READ_ONLY=1 hides mutations from discovery and refuses direct hidden calls. BUFFER_ALLOW_DESTRUCTIVE=0 separately refuses mutations even with confirmation. --agent/--yes are output/noninteractive controls, not permission to publish. Local preview is available in read-only mode because it validates and returns data without transmitting a mutation.
 

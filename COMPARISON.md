@@ -18,16 +18,6 @@ Pinned community sources were read without executing them or using provider acco
 Both official CLI and this package perform upstream field selection and detect typed API errors. Neither capability is claimed unique. Our local --select additionally trims already received output; it cannot reduce upstream work. The owned recurring workflow is deliberate reviewed publishing or administration across isolated profiles with shared enforced policy and bounded reads. No token, speed, success-rate or global superiority claim is inferred from schemas, SEO or tool counts. Provider-account outcomes, desktop GUI and matched Codex task usage remain separate.
 
 
-CLI and MCP share discovery, validation, handlers, accounts and WriteGuard. The house CLI calls the real server through SDK in-memory transport, so no second provider implementation can drift.
+CLI and MCP are built by [Slipway](https://github.com/thenavidm/slipway) from each tool's one definition, so they share discovery, validation, handlers, accounts and one write guard, and no second provider implementation can drift.
 
-Fresh matched Codex task/usage measurements remain pending. Compare the same account/resource, input, upstream fields and completed outcome; include help/schema/discovery, results, retries and reasoning. Record date, model/client/package versions, loading settings, actual input/output tokens and latency.
-
-| Mode | Required evidence |
-| --- | --- |
-| Eager MCP | Schemas/instructions actually loaded |
-| Deferred MCP | Selected schemas plus discovery overhead |
-| Skill read once | Actual shipped skill and command help |
-| Recurring skill description | Actual installed listing |
-| Equivalent task | Same read or exact approved mutation and successful outcome |
-
-Upstream fields can reduce requested provider data; official CLI supplies this too. --select reduces model-visible result after receipt. Tool counts, schema bytes and character estimates are not task-token savings. CLI does not have zero context cost. Claude Code benchmarks are deferred while Codex is the active client.
+README section 7 has this package's own costs, measured in Claude Code and Codex against 2.0.1 on 2026-10-05. Tool counts, schema bytes and character estimates are not task-token savings, and no other offering was measured.

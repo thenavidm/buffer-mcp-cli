@@ -26,7 +26,8 @@ Use --agent for compact JSON and --select for needed output fields. Dashed comma
 | Exit | Meaning |
 | --- | --- |
 | 0 | Success |
-| 2 | Invalid usage or refused operation |
+| 1 | Unexpected error |
+| 2 | Invalid usage or refused operation, an unknown command or a hidden write |
 | 3 | Not found |
 | 4 | Authentication/permissions |
 | 5 | API/transport failure |
@@ -35,7 +36,7 @@ Use --agent for compact JSON and --select for needed output fields. Dashed comma
 
 ## Approval and scope
 
-All 17 exposed mutation tools require --confirm/confirm=true for the exact human-requested action. Named create/edit/delete/queue/content/promotion/template operations and generic GraphQL mutation pass through one WriteGuard before file reading or network work.
+All 17 exposed mutation tools require --confirm/confirm=true for the exact human-requested action. Named create/edit/delete/queue/content/promotion/template operations and generic GraphQL mutation pass through one write guard before file reading or network work. Over MCP the person approves each in the client's own prompt or form; confirm:true counts only where the client cannot ask.
 
 BUFFER_READ_ONLY=1 hides mutations from discovery and refuses direct hidden calls. BUFFER_ALLOW_DESTRUCTIVE=0 separately refuses mutations even with confirmation. --agent/--yes are output/noninteractive controls, not permission to publish. Local preview is available in read-only mode because it validates and returns data without transmitting a mutation.
 
@@ -117,4 +118,4 @@ After private environment configuration:
 codex mcp add buffer -- npx -y @thenavidm/buffer-mcp-cli@latest
 ```
 
-Optional Claude Code setup and the other clients are in INSTALL.md. Fresh matched-task usage evidence is pending; do not invent token savings.
+Optional Claude Code setup and the other clients are in INSTALL.md. Measured costs are in README section 7; do not invent token savings.

@@ -2,7 +2,7 @@
   "manifest_version": "0.2",
   "name": "buffer",
   "display_name": "Buffer",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "Buffer MCP server with 41 tools: 24 reads and 17 confirmed mutations.",
   "long_description": "Current schema-generated GraphQL operations with private named credentials, shared mandatory mutation confirmation and read-only enforcement. Includes local previews and bounded read pagination. Provider account and GUI outcomes are validated separately.",
   "author": {

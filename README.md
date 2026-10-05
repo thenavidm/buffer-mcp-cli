@@ -11,13 +11,13 @@
 
 Buffer MCP server and CLI for Codex and AI agents. **41 tools** for current GraphQL account, channels, posts, content items, templates and analytics, with private accounts and explicit operation approval. One shared implementation supplies both binaries and a desktop bundle.
 
-Built and maintained by [Navid Moazzez](https://navid.me?utm_source=github&utm_medium=referral&utm_campaign=buffer-mcp-cli&utm_content=readme). The complete guide is on [navid.me](https://navid.me/mcp-servers/buffer).
+Built and maintained by [Navid Moazzez](https://navid.me?utm_source=github&utm_medium=referral&utm_campaign=buffer-mcp-cli&utm_content=readme). Built on [Slipway](https://github.com/thenavidm/slipway), which turns one definition of each tool into the MCP server and the CLI. The complete guide is on [navid.me](https://navid.me/mcp-servers/buffer).
 
 <img src="https://cdn.navid.me/repos/buffer-mcp-cli-retina.gif" alt="Illustrated workflow in the house terminal component" width="520">
 
 The terminal illustrates real command names and approval flow. It is not a recording of a provider account run. Buffer already has official CLI and hosted MCP products; their current schemas, field selection and supported workflows are compared below.
 
-Requires Node 22+ and eligible Buffer API access for account operations. **Validation:** fixture tests, schema validation and protocol/artifact discovery are separate from provider-account outcomes, desktop GUI outcomes and fresh measured task/token evidence. Pending evidence is recorded, without invented success rates or efficiency claims.
+Requires Node 22+ and eligible Buffer API access for account operations. **Validation:** fixture tests, schema validation and protocol/artifact discovery are separate from provider-account outcomes and desktop GUI outcomes, which remain unverified. Section 7 has the measured token costs; no success rate is invented.
 
 ## Two ways to use it
 
@@ -71,7 +71,7 @@ Configure private credentials first. Ask: “Read scheduled posts for this exact
 | 4 | [Connect your client](#4-connect-your-client) | Connect your client |
 | 5 | [Check it works](#5-check-it-works) | Check it works |
 | 6 | [Output, flags and exit codes](#6-output-flags-and-exit-codes) | Output, flags and exit codes |
-| 7 | [MCP or CLI and token cost](#7-mcp-or-cli-and-token-cost) | MCP or CLI and token cost |
+| 7 | [MCP or CLI and token cost](#7-mcp-or-cli-and-token-cost) | Measured in Claude Code and Codex |
 | 8 | [Every tool and argument](#8-every-tool-and-argument) | Every tool and argument |
 | 9 | [Publishing, content items and analytics](#9-publishing-content-items-and-analytics) | Publishing, content items and analytics |
 | 10 | [Pagination, retries and local input files](#10-pagination-retries-and-local-input-files) | Pagination, retries and local input files |
@@ -200,7 +200,7 @@ buffer-cli get-post --id SELECTED_POST --fields id --fields status --agent --sel
 
 | Flag | Meaning |
 | --- | --- |
-| --agent | JSON, compact, no-input, no-color, yes; does not provide --confirm |
+| --agent | Compact JSON and no prompts; never confirms a write |
 | --json / --compact | JSON output and compact spacing |
 | --select a,b.c | Keep selected output paths after receipt |
 | --fields id --fields status | Native upstream field selection for supported named operations |
@@ -212,7 +212,8 @@ buffer-cli get-post --id SELECTED_POST --fields id --fields status --agent --sel
 | Exit | Meaning |
 | --- | --- |
 | 0 | Successful local result or provider response |
-| 2 | Usage, invalid input or refused mutation |
+| 1 | Unexpected error |
+| 2 | Usage, invalid input or a refused mutation, an unknown command or a hidden write |
 | 3 | Not found |
 | 4 | Authentication or forbidden permission |
 | 5 | Provider/GraphQL/typed mutation/network failure |
@@ -223,19 +224,21 @@ GraphQL can fail inside HTTP 200. errors arrays fail even with partial data; typ
 
 ## 7. MCP or CLI and token cost
 
-CLI and MCP share discovery, validation, handlers, accounts and WriteGuard. The house CLI calls the real server through SDK in-memory transport, so no second provider implementation can drift.
+CLI and MCP are built by [Slipway](https://github.com/thenavidm/slipway) from each tool's one definition, so they share discovery, validation, handlers, accounts and one write guard, and no second provider implementation can drift.
 
-Fresh matched Codex task/usage measurements remain pending. Compare the same account/resource, input, upstream fields and completed outcome; include help/schema/discovery, results, retries and reasoning. Record date, model/client/package versions, loading settings, actual input/output tokens and latency.
+Measured on 2026-10-05 against 2.0.1, the same day, with Claude Code 2.1.286 on Claude Opus 5.5 (one short prompt with and without the server connected, the difference read from the API's own usage figures) and Codex 0.159.3 on gpt-6.1-sol:
 
-| Mode | Required evidence |
-| --- | --- |
-| Eager MCP | Schemas/instructions actually loaded |
-| Deferred MCP | Selected schemas plus discovery overhead |
-| Skill read once | Actual shipped skill and command help |
-| Recurring skill description | Actual installed listing |
-| Equivalent task | Same read or exact approved mutation and successful outcome |
+| Cost | 2.0.1 | 3.0.0 |
+| --- | --- | --- |
+| Claude Code, every tool loaded, every message | 112,029 | 60,720 |
+| Claude Code's default, tool search, every message | 737 | 740 |
+| `SKILL.md`, read once | 3,477 | 3,535 |
+| Codex over the CLI, one task, median of five | 113,353 | 111,104 |
+| Codex over MCP, the same task, median of five | 48,471 | 48,492 |
 
-Upstream fields can reduce requested provider data; official CLI supplies this too. --select reduces model-visible result after receipt. Tool counts, schema bytes and character estimates are not task-token savings. CLI does not have zero context cost. Claude Code benchmarks are deferred while Codex is the active client.
+The task was "find the command that schedules a post to a channel, and the flags it requires". Every tool loaded costs less because each write's native input appeared twice, as its own fields and inside `payload`, and 3.0.0 writes each repeated part once under `$defs`. Over the CLI, every 3.0.0 run asked `which` (476 characters) where 2.0.1's read the full command list (8,096), and `create-post`'s schema printed in 33,734 characters instead of 116,294. Over MCP, Codex prints its own TypeScript rendering of the tool list, cut to about 10,000 tokens; that rendering is 426 tokens longer on 3.0.0 (21,946 against 21,520), because Codex leaves the argument descriptions out of a tool whose schema is large, and sharing the repeats brought `create_idea` under that size. `SKILL.md` costs 58 more because it now says how approval works over MCP and lists every exit code; tool search differs by 3 tokens.
+
+Upstream fields can reduce requested provider data, and `--select` reduces the result a model sees after receipt. The CLI does not cost nothing: its help and output reach the model like anything else.
 
 ## 8. Every tool and argument
 
@@ -312,7 +315,7 @@ Default upstream fields: `id`, `email`, `organizations.id`, `organizations.chann
 | `payload_file` | No; body and guard rules apply | string | Regular local JSON input file, no symlink, at most 1 MiB; cannot mix with payload or individual input fields. minLength: `1`. |
 | `fields` | No; body and guard rules apply | array | Upstream field paths relative to the result, as in official CLI --fields. Default fields are bounded. Use items.id for connection nodes; pageInfo.endCursor for cursors. minItems: `1`. maxItems: `100`. Items: string. |
 | `account` | No; body and guard rules apply | string | Private account profile name. Selects credentials only; an organization default does not restrict provider token permissions. minLength: `1`. |
-| `confirm` | No; body and guard rules apply | boolean | Must be true for this exact user-requested Buffer mutation. |
+| `confirm` | No; body and guard rules apply | boolean | Set true only when the user asked for exactly this action. |
 
 Native input requirements: `id`, `postId`. Use individual fields or complete payload/payload_file.
 
@@ -438,7 +441,7 @@ Default upstream fields: `items.id`, `items.accountId`, `items.allowedActions`, 
 | `payload_file` | No; body and guard rules apply | string | Regular local JSON input file, no symlink, at most 1 MiB; cannot mix with payload or individual input fields. minLength: `1`. |
 | `fields` | No; body and guard rules apply | array | Upstream field paths relative to the result, as in official CLI --fields. Default fields are bounded. Use items.id for connection nodes; pageInfo.endCursor for cursors. minItems: `1`. maxItems: `100`. Items: string. |
 | `account` | No; body and guard rules apply | string | Private account profile name. Selects credentials only; an organization default does not restrict provider token permissions. minLength: `1`. |
-| `confirm` | No; body and guard rules apply | boolean | Must be true for this exact user-requested Buffer mutation. |
+| `confirm` | No; body and guard rules apply | boolean | Set true only when the user asked for exactly this action. |
 
 Native input requirements: `organizationId`, `posts`. Use individual fields or complete payload/payload_file.
 
@@ -460,7 +463,7 @@ Default upstream fields: `__typename`, `content.id`, `content.accountId`, `conte
 | `payload_file` | No; body and guard rules apply | string | Regular local JSON input file, no symlink, at most 1 MiB; cannot mix with payload or individual input fields. minLength: `1`. |
 | `fields` | No; body and guard rules apply | array | Upstream field paths relative to the result, as in official CLI --fields. Default fields are bounded. Use items.id for connection nodes; pageInfo.endCursor for cursors. minItems: `1`. maxItems: `100`. Items: string. |
 | `account` | No; body and guard rules apply | string | Private account profile name. Selects credentials only; an organization default does not restrict provider token permissions. minLength: `1`. |
-| `confirm` | No; body and guard rules apply | boolean | Must be true for this exact user-requested Buffer mutation. |
+| `confirm` | No; body and guard rules apply | boolean | Set true only when the user asked for exactly this action. |
 
 Native input requirements: `draft`, `organizationId`. Use individual fields or complete payload/payload_file.
 
@@ -481,7 +484,7 @@ Default upstream fields: `__typename`, `contentItem.id`, `contentItem.accountId`
 | `payload_file` | No; body and guard rules apply | string | Regular local JSON input file, no symlink, at most 1 MiB; cannot mix with payload or individual input fields. minLength: `1`. |
 | `fields` | No; body and guard rules apply | array | Upstream field paths relative to the result, as in official CLI --fields. Default fields are bounded. Use items.id for connection nodes; pageInfo.endCursor for cursors. minItems: `1`. maxItems: `100`. Items: string. |
 | `account` | No; body and guard rules apply | string | Private account profile name. Selects credentials only; an organization default does not restrict provider token permissions. minLength: `1`. |
-| `confirm` | No; body and guard rules apply | boolean | Must be true for this exact user-requested Buffer mutation. |
+| `confirm` | No; body and guard rules apply | boolean | Set true only when the user asked for exactly this action. |
 
 Native input requirements: `content`, `organizationId`. Use individual fields or complete payload/payload_file.
 
@@ -511,7 +514,7 @@ Default upstream fields: `__typename`, `id`, `content.aiAssisted`, `content.date
 | `payload_file` | No; body and guard rules apply | string | Regular local JSON input file, no symlink, at most 1 MiB; cannot mix with payload or individual input fields. minLength: `1`. |
 | `fields` | No; body and guard rules apply | array | Upstream field paths relative to the result, as in official CLI --fields. Default fields are bounded. Use items.id for connection nodes; pageInfo.endCursor for cursors. minItems: `1`. maxItems: `100`. Items: string. |
 | `account` | No; body and guard rules apply | string | Private account profile name. Selects credentials only; an organization default does not restrict provider token permissions. minLength: `1`. |
-| `confirm` | No; body and guard rules apply | boolean | Must be true for this exact user-requested Buffer mutation. |
+| `confirm` | No; body and guard rules apply | boolean | Set true only when the user asked for exactly this action. |
 
 Native input requirements: `channelId`, `mode`, `schedulingType`. Use individual fields or complete payload/payload_file.
 
@@ -533,7 +536,7 @@ Default upstream fields: `post.id`, `post.status`. Inspect get_operation_schema 
 | `payload_file` | No; body and guard rules apply | string | Regular local JSON input file, no symlink, at most 1 MiB; cannot mix with payload or individual input fields. minLength: `1`. |
 | `fields` | No; body and guard rules apply | array | Upstream field paths relative to the result, as in official CLI --fields. Default fields are bounded. Use items.id for connection nodes; pageInfo.endCursor for cursors. minItems: `1`. maxItems: `100`. Items: string. |
 | `account` | No; body and guard rules apply | string | Private account profile name. Selects credentials only; an organization default does not restrict provider token permissions. minLength: `1`. |
-| `confirm` | No; body and guard rules apply | boolean | Must be true for this exact user-requested Buffer mutation. |
+| `confirm` | No; body and guard rules apply | boolean | Set true only when the user asked for exactly this action. |
 
 Native input requirements: `body`, `organizationId`, `title`. Use individual fields or complete payload/payload_file.
 
@@ -567,7 +570,7 @@ Default upstream fields: `channelId`, `isAtLimit`, `limit`, `scheduled`, `sent`.
 | `payload_file` | No; body and guard rules apply | string | Regular local JSON input file, no symlink, at most 1 MiB; cannot mix with payload or individual input fields. minLength: `1`. |
 | `fields` | No; body and guard rules apply | array | Upstream field paths relative to the result, as in official CLI --fields. Default fields are bounded. Use items.id for connection nodes; pageInfo.endCursor for cursors. minItems: `1`. maxItems: `100`. Items: string. |
 | `account` | No; body and guard rules apply | string | Private account profile name. Selects credentials only; an organization default does not restrict provider token permissions. minLength: `1`. |
-| `confirm` | No; body and guard rules apply | boolean | Must be true for this exact user-requested Buffer mutation. |
+| `confirm` | No; body and guard rules apply | boolean | Set true only when the user asked for exactly this action. |
 
 Native input requirements: `id`. Use individual fields or complete payload/payload_file.
 
@@ -584,7 +587,7 @@ Default upstream fields: `__typename`, `_empty`, `errors.channelId`, `errors.mes
 | `payload_file` | No; body and guard rules apply | string | Regular local JSON input file, no symlink, at most 1 MiB; cannot mix with payload or individual input fields. minLength: `1`. |
 | `fields` | No; body and guard rules apply | array | Upstream field paths relative to the result, as in official CLI --fields. Default fields are bounded. Use items.id for connection nodes; pageInfo.endCursor for cursors. minItems: `1`. maxItems: `100`. Items: string. |
 | `account` | No; body and guard rules apply | string | Private account profile name. Selects credentials only; an organization default does not restrict provider token permissions. minLength: `1`. |
-| `confirm` | No; body and guard rules apply | boolean | Must be true for this exact user-requested Buffer mutation. |
+| `confirm` | No; body and guard rules apply | boolean | Set true only when the user asked for exactly this action. |
 
 Native input requirements: `id`. Use individual fields or complete payload/payload_file.
 
@@ -601,7 +604,7 @@ Default upstream fields: `__typename`, `id`, `message`. Inspect get_operation_sc
 | `payload_file` | No; body and guard rules apply | string | Regular local JSON input file, no symlink, at most 1 MiB; cannot mix with payload or individual input fields. minLength: `1`. |
 | `fields` | No; body and guard rules apply | array | Upstream field paths relative to the result, as in official CLI --fields. Default fields are bounded. Use items.id for connection nodes; pageInfo.endCursor for cursors. minItems: `1`. maxItems: `100`. Items: string. |
 | `account` | No; body and guard rules apply | string | Private account profile name. Selects credentials only; an organization default does not restrict provider token permissions. minLength: `1`. |
-| `confirm` | No; body and guard rules apply | boolean | Must be true for this exact user-requested Buffer mutation. |
+| `confirm` | No; body and guard rules apply | boolean | Set true only when the user asked for exactly this action. |
 
 Native input requirements: `id`. Use individual fields or complete payload/payload_file.
 
@@ -631,7 +634,7 @@ Default upstream fields: `__typename`, `_empty`, `message`. Inspect get_operatio
 | `payload_file` | No; body and guard rules apply | string | Regular local JSON input file, no symlink, at most 1 MiB; cannot mix with payload or individual input fields. minLength: `1`. |
 | `fields` | No; body and guard rules apply | array | Upstream field paths relative to the result, as in official CLI --fields. Default fields are bounded. Use items.id for connection nodes; pageInfo.endCursor for cursors. minItems: `1`. maxItems: `100`. Items: string. |
 | `account` | No; body and guard rules apply | string | Private account profile name. Selects credentials only; an organization default does not restrict provider token permissions. minLength: `1`. |
-| `confirm` | No; body and guard rules apply | boolean | Must be true for this exact user-requested Buffer mutation. |
+| `confirm` | No; body and guard rules apply | boolean | Set true only when the user asked for exactly this action. |
 
 Native input requirements: `id`. Use individual fields or complete payload/payload_file.
 
@@ -702,7 +705,7 @@ Default upstream fields: `__typename`, `audio.id`, `audio.coverArtworkUrl`, `aud
 | `payload_file` | No; body and guard rules apply | string | Regular local JSON input file, no symlink, at most 1 MiB; cannot mix with payload or individual input fields. minLength: `1`. |
 | `fields` | No; body and guard rules apply | array | Upstream field paths relative to the result, as in official CLI --fields. Default fields are bounded. Use items.id for connection nodes; pageInfo.endCursor for cursors. minItems: `1`. maxItems: `100`. Items: string. |
 | `account` | No; body and guard rules apply | string | Private account profile name. Selects credentials only; an organization default does not restrict provider token permissions. minLength: `1`. |
-| `confirm` | No; body and guard rules apply | boolean | Must be true for this exact user-requested Buffer mutation. |
+| `confirm` | No; body and guard rules apply | boolean | Set true only when the user asked for exactly this action. |
 
 Native input requirements: `id`, `position`. Use individual fields or complete payload/payload_file.
 
@@ -792,7 +795,7 @@ Default upstream fields: `items.id`, `items.body`, `items.description`, `items.e
 | `payload_file` | No; body and guard rules apply | string | Regular local JSON input file, no symlink, at most 1 MiB; cannot mix with payload or individual input fields. minLength: `1`. |
 | `fields` | No; body and guard rules apply | array | Upstream field paths relative to the result, as in official CLI --fields. Default fields are bounded. Use items.id for connection nodes; pageInfo.endCursor for cursors. minItems: `1`. maxItems: `100`. Items: string. |
 | `account` | No; body and guard rules apply | string | Private account profile name. Selects credentials only; an organization default does not restrict provider token permissions. minLength: `1`. |
-| `confirm` | No; body and guard rules apply | boolean | Must be true for this exact user-requested Buffer mutation. |
+| `confirm` | No; body and guard rules apply | boolean | Set true only when the user asked for exactly this action. |
 
 Native input requirements: `id`, `posts`. Use individual fields or complete payload/payload_file.
 
@@ -810,7 +813,7 @@ Default upstream fields: `__typename`, `contentItem.id`, `contentItem.accountId`
 | `payload_file` | No; body and guard rules apply | string | Regular local JSON input file, no symlink, at most 1 MiB; cannot mix with payload or individual input fields. minLength: `1`. |
 | `fields` | No; body and guard rules apply | array | Upstream field paths relative to the result, as in official CLI --fields. Default fields are bounded. Use items.id for connection nodes; pageInfo.endCursor for cursors. minItems: `1`. maxItems: `100`. Items: string. |
 | `account` | No; body and guard rules apply | string | Private account profile name. Selects credentials only; an organization default does not restrict provider token permissions. minLength: `1`. |
-| `confirm` | No; body and guard rules apply | boolean | Must be true for this exact user-requested Buffer mutation. |
+| `confirm` | No; body and guard rules apply | boolean | Set true only when the user asked for exactly this action. |
 
 Native input requirements: `id`, `postId`. Use individual fields or complete payload/payload_file.
 
@@ -899,7 +902,7 @@ Default upstream fields: `__typename`, `audio.id`, `audio.coverArtworkUrl`, `aud
 | `payload_file` | No; body and guard rules apply | string | Regular local JSON input file, no symlink, at most 1 MiB; cannot mix with payload or individual input fields. minLength: `1`. |
 | `fields` | No; body and guard rules apply | array | Upstream field paths relative to the result, as in official CLI --fields. Default fields are bounded. Use items.id for connection nodes; pageInfo.endCursor for cursors. minItems: `1`. maxItems: `100`. Items: string. |
 | `account` | No; body and guard rules apply | string | Private account profile name. Selects credentials only; an organization default does not restrict provider token permissions. minLength: `1`. |
-| `confirm` | No; body and guard rules apply | boolean | Must be true for this exact user-requested Buffer mutation. |
+| `confirm` | No; body and guard rules apply | boolean | Set true only when the user asked for exactly this action. |
 
 Native input requirements: `id`. Use individual fields or complete payload/payload_file.
 
@@ -919,7 +922,7 @@ Default upstream fields: `__typename`, `contentItem.id`, `contentItem.accountId`
 | `payload_file` | No; body and guard rules apply | string | Regular local JSON input file, no symlink, at most 1 MiB; cannot mix with payload or individual input fields. minLength: `1`. |
 | `fields` | No; body and guard rules apply | array | Upstream field paths relative to the result, as in official CLI --fields. Default fields are bounded. Use items.id for connection nodes; pageInfo.endCursor for cursors. minItems: `1`. maxItems: `100`. Items: string. |
 | `account` | No; body and guard rules apply | string | Private account profile name. Selects credentials only; an organization default does not restrict provider token permissions. minLength: `1`. |
-| `confirm` | No; body and guard rules apply | boolean | Must be true for this exact user-requested Buffer mutation. |
+| `confirm` | No; body and guard rules apply | boolean | Set true only when the user asked for exactly this action. |
 
 Native input requirements: `id`, `draft`. Use individual fields or complete payload/payload_file.
 
@@ -941,7 +944,7 @@ Default upstream fields: `__typename`, `contentItem.id`, `contentItem.accountId`
 | `payload_file` | No; body and guard rules apply | string | Regular local JSON input file, no symlink, at most 1 MiB; cannot mix with payload or individual input fields. minLength: `1`. |
 | `fields` | No; body and guard rules apply | array | Upstream field paths relative to the result, as in official CLI --fields. Default fields are bounded. Use items.id for connection nodes; pageInfo.endCursor for cursors. minItems: `1`. maxItems: `100`. Items: string. |
 | `account` | No; body and guard rules apply | string | Private account profile name. Selects credentials only; an organization default does not restrict provider token permissions. minLength: `1`. |
-| `confirm` | No; body and guard rules apply | boolean | Must be true for this exact user-requested Buffer mutation. |
+| `confirm` | No; body and guard rules apply | boolean | Set true only when the user asked for exactly this action. |
 
 Native input requirements: `id`. Use individual fields or complete payload/payload_file.
 
@@ -974,7 +977,7 @@ Default upstream fields: `__typename`, `postTemplate.id`, `postTemplate.body`, `
 | `document` | Yes | string | See the full input schema. minLength: `1`. maxLength: `65536`. |
 | `variables` | No; body and guard rules apply | object | Native JSON variables; validated remotely by Buffer. |
 | `account` | No; body and guard rules apply | string | Private account profile name. Selects credentials only; an organization default does not restrict provider token permissions. minLength: `1`. |
-| `confirm` | No; body and guard rules apply | boolean | Must be true for this exact user-requested Buffer mutation. |
+| `confirm` | No; body and guard rules apply | boolean | Set true only when the user asked for exactly this action. |
 
 #### preview_operation
 
@@ -1885,17 +1888,19 @@ A profile label is credential routing, not a security boundary for an account-wi
 
 ## 12. Writing safely
 
-All 17 exposed mutation tools require --confirm/confirm=true for the exact human-requested action. Named create/edit/delete/queue/content/promotion/template operations and generic GraphQL mutation pass through one WriteGuard before file reading or network work.
+All 17 exposed mutation tools require --confirm/confirm=true for the exact human-requested action. Named create/edit/delete/queue/content/promotion/template operations and generic GraphQL mutation pass through one write guard before file reading or network work.
+
+Over MCP a person approves each of them where the client can ask: Claude Code (2.1.246 and later) shows its own prompt, and a client that can show forms asks with an approval form whose one box starts unticked. Each approval is signed, bound to that exact call and works once. Where a client can do neither, the model's confirm:true counts. BUFFER_CONFIRM=model makes confirm:true enough everywhere, for an agent with no person to ask.
 
 BUFFER_READ_ONLY=1 hides mutations from discovery and refuses direct hidden calls. BUFFER_ALLOW_DESTRUCTIVE=0 separately refuses mutations even with confirmation. --agent/--yes are output/noninteractive controls, not permission to publish. Local preview is available in read-only mode because it validates and returns data without transmitting a mutation.
 
 Generic query parses exactly one GraphQL query and refuses mutation/subscription/multiple-operation documents. Generic mutation parses exactly one mutation with one direct root field; multi-action/root-fragment mutation documents refuse. It inserts __typename and the MutationError message catch-all. Aliases are preserved. Buffer validates native generic variables and provider permissions; local schema validation of unknown experimental operations is not claimed.
 
-Audit writes are opt-in metadata containing time, surface, tool, risk, static description and guard outcome, without keys, post text, native variables or provider content. Keep the log private. Guard acceptance is permission to attempt one operation, not proof it succeeded remotely. Provider permissions/client consent remain independent.
+Audit writes are opt-in metadata containing time, surface, tool, risk, static description, guard outcome and who approved it, then a done or failed line for each allowed call, without keys, post text, native variables or provider content. Keep the log private. Guard acceptance is permission to attempt one operation, not proof it succeeded remotely. Provider permissions/client consent remain independent.
 
 ## 13. How the two surfaces work
 
-src/tools/index.ts exports one ALL_TOOLS catalogue, current published native metadata and six helpers. The SDK server registers discovery and calls; the house CLI uses SDK in-memory transport to obtain the same schemas and execute the same handlers. There is one validation path, one private client and one WriteGuard.
+src/tools/index.ts exports one ALL_TOOLS catalogue, current published native metadata and six helpers. [Slipway](https://github.com/thenavidm/slipway) builds the MCP server, over stdio or `--http`, and the CLI from each tool's one definition, so there is one validation path, one private client, one write guard and one set of exit codes.
 
 Thirty-five native GraphQL shells, nested input schemas and selection trees are reused from @bufferapp/cli 1.2.2. The upstream field-selection renderer is credited under ISC. Ajv performs strict native input checks; GraphQL parsing verifies generic operation type before transmission. Only the fixed HTTPS Buffer endpoint is used; redirects, arbitrary API hosts and arbitrary caller headers are absent.
 
@@ -1938,6 +1943,12 @@ Opt-in audit logs contain guard metadata only. Do not put credentials, signed li
 | --- | --- |
 | `BUFFER_REQUEST_TIMEOUT_MS` | Default 30000, range 100–300000 |
 | `BUFFER_MIN_REQUEST_INTERVAL_MS` | Default 200, range 0–10000; process/profile pacing only |
+| `BUFFER_CONFIRM` | `human` by default; `model` lets confirm:true alone approve over MCP, for an agent with no person to ask |
+| `BUFFER_SURFACE` | `full` by default; `search` lists three tools that find, describe and run the rest |
+| `BUFFER_TOOL_TIMEOUT_MS` | Give up on any tool after this long |
+| `BUFFER_HTTP_PORT`, `BUFFER_HTTP_HOST`, `BUFFER_HTTP_TOKEN` | For `--http`: port 8787 and host 127.0.0.1 by default; any other host needs the bearer token |
+| `BUFFER_HTTP_ALLOWED_ORIGINS` | Comma-separated browser origins allowed to call `--http`; a page from any other site is refused |
+| `BUFFER_DEBUG` | `1` prints debug lines on stderr |
 
 ## 16. Updates and removal
 
@@ -1995,13 +2006,14 @@ Both official CLI and this package perform upstream field selection and detect t
 
 | Component | Current baseline |
 | --- | --- |
-| `Package / desktop` | 2.0.0 |
+| `Package / desktop` | 3.0.0 |
 | `Named operations / current reference` | 35 generated / 42 roots, seven experimental newer roots via generic |
 | `Shared catalogue` | 41 tools: 24 reads, 17 confirmed mutations |
 | `Official CLI inspected` | @bufferapp/cli 1.2.2 (published package) |
 | `Official MCP` | 20 documented tools plus generic GraphQL; no authenticated discovery |
 | `Node` | 22+; CI targets 22/24 on macOS/Linux/Windows |
-| `@modelcontextprotocol/sdk` | 1.32.0 |
+| `@thenavidm/slipway` | 0.1.14 |
+| `MCP TypeScript SDK, through Slipway` | 2.3.0 |
 | `ajv` | 8.20.0 |
 | `ajv-formats` | 3.0.1 |
 | `graphql` | 16.14.2 |
@@ -2069,7 +2081,7 @@ Yes. Unique named private profiles select their own keys/files/default organizat
 <details>
 <summary><b>Does it work in Codex?</b></summary>
 
-Use the documented local stdio registration or shared CLI. Codex is the priority; fresh matched task/token usage remains pending.
+Use the documented local stdio registration or shared CLI. Section 7 has what Codex 0.159.3 read for one task over each.
 
 </details>
 
@@ -2146,7 +2158,7 @@ No automatic OAuth exchange/refresh is implemented. Analytics requires the curre
 <details>
 <summary><b>Is CLI more token-efficient?</b></summary>
 
-Only a matched successful Codex task with actual usage can establish that. Upstream fields and local output selection help bound data, but counts, character estimates and borrowed metrics do not prove token savings.
+It depends on the client and the task. In Claude Code the CLI costs nothing until it is used, plus about 3,500 tokens for `SKILL.md` once, where the server costs about 740 tokens a message with tool search and 60,700 with every tool loaded. In Codex, finding the command that schedules a post and its flags took a median of 111,104 input tokens over the CLI and 48,492 over MCP, mostly because the CLI route printed `create-post`'s full schema. Section 7 has how each was measured.
 
 </details>
 
@@ -2179,7 +2191,7 @@ If this is useful, star the repo and come say hi on [X](https://x.com/thenavidm)
 
 ## Dependencies
 
-Runtime: MCP TypeScript SDK, Ajv, ajv-formats and GraphQL. Development: TypeScript, Vitest, Vite, Acorn and MCPB. Exact component versions are above and in package-lock.json. ISC Buffer selection code and generated metadata are credited in THIRD_PARTY_NOTICES.md; development packaging tools are excluded from runtime bundles.
+Runtime: Slipway, which brings the MCP TypeScript SDK, plus Ajv, ajv-formats and GraphQL. Development: TypeScript, Vitest, Vite, Acorn and MCPB. Exact component versions are above and in package-lock.json. ISC Buffer selection code and generated metadata are credited in THIRD_PARTY_NOTICES.md; development packaging tools are excluded from runtime bundles.
 
 ## License
 
