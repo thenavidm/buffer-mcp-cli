@@ -1,6 +1,6 @@
 {
   "name": "@thenavidm/buffer-mcp-cli",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Buffer GraphQL MCP and CLI with shared confirmation, read-only policies, private accounts and bounded read pagination.",
   "type": "module",
   "main": "./dist/index.js",
@@ -23,7 +23,7 @@
     "sync:api": "node scripts/sync-official-schema.mjs"
   },
   "dependencies": {
-    "@thenavidm/slipway": "^0.1.14",
+    "@thenavidm/slipway": "^0.1.17",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "graphql": "^16.12.0"

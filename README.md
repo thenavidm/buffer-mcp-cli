@@ -2006,13 +2006,13 @@ Both official CLI and this package perform upstream field selection and detect t
 
 | Component | Current baseline |
 | --- | --- |
-| `Package / desktop` | 3.0.0 |
+| `Package / desktop` | 3.0.1 |
 | `Named operations / current reference` | 35 generated / 42 roots, seven experimental newer roots via generic |
 | `Shared catalogue` | 41 tools: 24 reads, 17 confirmed mutations |
 | `Official CLI inspected` | @bufferapp/cli 1.2.2 (published package) |
 | `Official MCP` | 20 documented tools plus generic GraphQL; no authenticated discovery |
 | `Node` | 22+; CI targets 22/24 on macOS/Linux/Windows |
-| `@thenavidm/slipway` | 0.1.14 |
+| `@thenavidm/slipway` | 0.1.17 |
 | `MCP TypeScript SDK, through Slipway` | 2.3.0 |
 | `ajv` | 8.20.0 |
 | `ajv-formats` | 3.0.1 |

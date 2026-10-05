@@ -39,6 +39,9 @@ export const INSTRUCTIONS = "Buffer current GraphQL API, local stdio MCP and sha
 /** Helpers that never leave this machine. */
 const LOCAL = new Set(["list_accounts"]);
 
+/** What 2.x's refusal said a confirmed call can do; the refusal and the approval form say it again. */
+const WHY = "may affect account content, media, messages, workflows or billing";
+
 const GENERIC_CODES = new Set(["USAGE", "CONFIG", "RATE_LIMIT", "AUTH", "API_ERROR"]);
 
 const LOGIN_HINT = "Run `buffer-cli login` for what to set.";
@@ -91,6 +94,7 @@ function toTool(spec: ToolSpec): Tool<Context> {
     risk: spec.risk,
     // 2.x asked for confirmation where the risk === "destructive".
     requireConfirm: spec.risk === "destructive",
+    ...(spec.risk === "destructive" ? { consequence: WHY } : {}),
     openWorld: !LOCAL.has(spec.name),
     summary: () => spec.title,
     handler: async (args, ctx) => {
